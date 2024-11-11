@@ -21,7 +21,9 @@ public class GatewayserverApplication {
 				.route(p -> p
 						.path("/creditCard/transactions-service/**")
 						.filters( f -> f.rewritePath("/creditCard/transactions-service/(?<segment>.*)","/${segment}")
-								.addResponseHeader("X-Response-Time", LocalDateTime.now().toString()))
+								.addResponseHeader("X-Response-Time", LocalDateTime.now().toString())
+								.circuitBreaker(config -> config.setName("transactionsCircuitBreaker")
+										.setFallbackUri("forward:/contactSupport")))
 						.uri("lb://TRANSACTIONS-SERVICE"))
 				.route(p -> p
 						.path("/creditCard/black-list-service/**")
